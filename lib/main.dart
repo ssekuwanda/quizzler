@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/question.dart';
+import 'quiz_brain.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 void main() {
   runApp(
@@ -29,15 +33,30 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  List<String> questions = [
-    'You can lead a cow up stairs but not down stairs',
-    'A slug\'s blood is green',
-    'A quater oof the human bones are in the feet',
-  ];
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = quizBrain.getQuestionAnswer();
+    setState(
+      () {
+        if (userPickedAnswer == correctAnswer) {
+          scoreKeeper.add(
+            Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+          );
+        } else {
+          scoreKeeper.add(
+            Icon(
+              Icons.close,
+              color: Colors.red,
+            ),
+          );
+        }
 
-  List<bool> answers = [false, true, false];
-
-  int questionNumber = 0;
+        quizBrain.nextQuestion();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +69,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questions[questionNumber],
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -74,11 +93,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(
-                  () {
-                    questionNumber += 1;
-                  },
-                );
+                checkAnswer(true);
               },
             ),
           ),
@@ -97,11 +112,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                setState(
-                  () {
-                    questionNumber += 1;
-                  },
-                );
+                checkAnswer(false);
               },
             ),
           ),
